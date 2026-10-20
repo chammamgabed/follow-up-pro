@@ -1,622 +1,269 @@
+
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Customer Registration</title>
-<style>
-*{box-sizing:border-box}
-:root{--navy:#14213d;--blue:#2563eb;--green:#138a4b;--bg:#f4f7fb;--text:#172033;--muted:#667085;--line:#e4e7ec}
-body{margin:0;background:var(--bg);font-family:Arial,Tahoma,sans-serif;color:var(--text)}
-header{background:linear-gradient(135deg,#14213d,#1f3159);color:#fff;padding:28px 20px;text-align:center;box-shadow:0 5px 18px #14213d22}
-header h1{margin:0;font-size:28px;letter-spacing:.2px}
-main{max-width:680px;margin:22px auto;padding:14px}
-.box{background:#fff;border-radius:22px;padding:22px;box-shadow:0 8px 26px #17203312;border:1px solid #edf0f4}
-h2{margin-top:0;font-size:22px}
-label{display:block;font-weight:bold;margin:14px 0 7px}
-input,textarea,select{width:100%;padding:14px;border:1px solid #d8dee8;border-radius:13px;font:inherit;background:#fff;transition:.2s}
-input:focus,textarea:focus,select:focus{outline:none;border-color:#6b9cff;box-shadow:0 0 0 4px #2563eb14}
-textarea{min-height:90px;resize:vertical}
-button{width:100%;padding:13px;border:0;border-radius:13px;font:inherit;font-weight:bold;cursor:pointer;margin-top:10px;transition:transform .12s,box-shadow .12s}
-button:active{transform:scale(.98)}
-.save{background:linear-gradient(135deg,#16834a,#0f6d3c);color:white;box-shadow:0 5px 12px #138a4b25}
-.return{background:#eef2f7;color:var(--text)}
-#message{display:none;margin-top:15px;padding:12px;border-radius:12px;background:#dcfae6;color:#12652f;text-align:center}
-#saved{margin-top:20px}
-.client{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:12px;box-shadow:0 4px 14px #1720330c}
-.small{color:var(--muted);font-size:14px;margin-top:5px}
-
-.card-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
-.card-actions button{padding:11px 7px;margin:0;border-radius:12px;font-family:inherit;cursor:pointer}
-.add-btn{background:#e9f1ff;color:#175cd3}
-.edit-btn{background:#fff4df;color:#b54708}
-.delete-btn{background:#ffebe9;color:#b42318}
- 
-.search-btn,.all-btn{border:0;border-radius:12px;padding:12px 16px;font-family:inherit;cursor:pointer;margin-top:0}
-.search-btn{background:linear-gradient(135deg,#16834a,#0f6d3c);color:#fff}.all-btn{background:#eef2f7;color:#172033}
-.search-empty{text-align:center;color:var(--muted);padding:24px}
-
-.client-name{display:block;color:#175cd3;cursor:pointer;text-decoration:none;font-size:20px;font-weight:800;margin-bottom:8px}
-.client-name:hover{text-decoration:underline}
-.detail-row{padding:12px 0;border-bottom:1px solid #eaecf0}
-.detail-label{font-weight:bold;color:#475467;display:block;margin-bottom:4px}
-.detail-value{color:#172033;word-break:break-word}
-
-.list-page{display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;overflow-y:auto}
-.list-header{position:sticky;top:0;background:linear-gradient(135deg,#14213d,#1f3159);color:#fff;padding:15px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 14px #14213d25}
-.list-header h2{margin:0;flex:1;text-align:center;font-size:21px}
-.back-list{width:auto;background:#fff;color:#17213b;border:0;border-radius:11px;padding:9px 13px;font:inherit;cursor:pointer;margin:0}
-.full-client-list{max-width:700px;margin:0 auto;padding:16px}
-.full-client-list .client{display:block;width:100%;margin:0 0 12px;background:#fff;position:relative;overflow:hidden}
-.full-client-list .client:before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:#2563eb}
-.list-number{display:inline-flex;background:#e9f1ff;color:#175cd3;border-radius:10px;width:32px;height:32px;align-items:center;justify-content:center;margin-right:7px;font-weight:bold}
-.list-phone{display:inline-block;margin-top:7px;background:#f2f7ff;color:#344054;border-radius:10px;padding:6px 9px;font-size:14px}
- 
-.reminder-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
-.reminder-stats>div{background:#f7f9fc;border-radius:12px;padding:12px;text-align:center}
-.reminder-stats b{display:block;font-size:24px;margin-bottom:5px}
-.reminder-stats span{font-size:13px}
-.notify-btn{background:#176b3a;color:#fff;border:0;border-radius:10px;padding:12px;width:100%;font:inherit;font-weight:bold;cursor:pointer;margin-bottom:8px}
-.reminder-card{border-left:5px solid #f59e0b}
-.reminder-card.overdue{border-left-color:#d92d20}
-.reminder-card.upcoming{border-left-color:#12b76a}
-.reminder-time{font-weight:bold;margin:7px 0}
-
-.details-modal,.form-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10001;padding:18px;overflow:auto}
-.details-modal.show,.form-modal.show{display:flex;align-items:flex-start;justify-content:center}
-.modal-card{width:min(650px,100%);background:#fff;border-radius:18px;padding:20px;margin-top:30px;box-shadow:0 10px 35px #0003}
-.modal-head{display:flex;align-items:center;gap:10px;border-bottom:1px solid #eaecf0;padding-bottom:12px;margin-bottom:8px}
-.modal-head h2{flex:1;text-align:center;margin:0}
-.close-modal{width:auto;margin:0;background:#eef2f6;color:#172033;padding:8px 13px}
-.details-actions{display:flex;gap:8px;margin-top:16px}.details-actions button{flex:1}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="The Digital Success System - Learn digital marketing, content creation, online business, and digital product sales.">
+  <title>The Digital Success System | Online Course</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.7;
+      color: #172033;
+      background: #fff;
+    }
+    header {
+      background: #101b3b;
+      color: white;
+      padding: 18px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .logo { font-size: 19px; font-weight: bold; }
+    header a { color: white; text-decoration: none; }
+    .hero {
+      padding: 75px 7%;
+      text-align: center;
+      color: white;
+      background: linear-gradient(135deg, #101b3b, #2456a6);
+    }
+    .tag {
+      display: inline-block;
+      padding: 6px 14px;
+      border: 1px solid #91baff;
+      border-radius: 30px;
+      margin-bottom: 20px;
+      font-size: 13px;
+    }
+    h1 { font-size: clamp(34px, 7vw, 55px); line-height: 1.15; margin-bottom: 22px; }
+    .hero p { max-width: 700px; margin: 0 auto 28px; color: #e2eaff; font-size: 18px; }
+    .btn {
+      display: inline-block;
+      background: #ffca55;
+      color: #172033;
+      padding: 15px 25px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+    .btn:hover { background: #ffda80; }
+    section { padding: 58px 7%; }
+    .section-title { text-align: center; font-size: 30px; margin-bottom: 16px; }
+    .intro { text-align: center; max-width: 720px; margin: 0 auto 32px; color: #596579; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      max-width: 1050px;
+      margin: 30px auto 0;
+    }
+    .card {
+      padding: 24px;
+      border: 1px solid #e1e7f0;
+      border-radius: 12px;
+      background: white;
+    }
+    .card h3 { margin: 10px 0; }
+    .icon { font-size: 30px; }
+    .soft { background: #f4f7fc; }
+    .lessons { max-width: 800px; margin: 25px auto 0; }
+    .lesson {
+      padding: 16px 18px;
+      background: white;
+      border: 1px solid #e1e7f0;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .pricing {
+      max-width: 520px;
+      margin: 25px auto 0;
+      padding: 35px 25px;
+      border: 2px solid #2456a6;
+      border-radius: 16px;
+      text-align: center;
+      background: white;
+    }
+    .price { font-size: 48px; font-weight: bold; margin: 12px 0; }
+    .pricing ul { list-style: none; text-align: left; margin: 24px 0; }
+    .pricing li { margin: 12px 0; }
+    .pricing li::before { content: "✓ "; color: #16834b; font-weight: bold; }
+    .note { font-size: 13px; color: #667085; margin-top: 14px; }
+    .faq { max-width: 800px; margin: 25px auto; }
+    details { padding: 18px; border-bottom: 1px solid #dfe5ee; }
+    summary { font-weight: bold; cursor: pointer; }
+    footer { background: #101b3b; color: #dce5f5; text-align: center; padding: 30px 7%; }
+    footer a { color: white; }
+    @media (max-width: 600px) {
+      .hero { padding: 55px 6%; }
+      section { padding: 42px 6%; }
+      header { padding: 16px 5%; }
+    }
+  </style>
 </head>
 <body>
+
 <header>
-<h1>👤 New Customer Registration</h1>
+  <div class="logo">The Digital Success System</div>
+  <a href="#enroll">Get Started →</a>
 </header>
 
 <main>
-<div class="box">
-<h2>Customer Information</h2>
+  <section class="hero">
+    <span class="tag">YOUR DIGITAL BUSINESS JOURNEY STARTS HERE</span>
+    <h1>Build Your Digital Skills.<br>Create New Opportunities.</h1>
+    <p>
+      Discover practical ways to create content, build your online brand,
+      market digital products, and develop your digital business skills
+      step by step.
+    </p>
+    <a class="btn" href="#enroll">Explore the Course</a>
+    <p style="font-size:13px;margin-top:18px;">
+      Learn at your own pace • Beginner-friendly • Practical learning
+    </p>
+  </section>
 
-<label>Customer Name *</label>
-<input id="name" placeholder="Example: Ahmed Ben Ali">
+  <section>
+    <h2 class="section-title">Welcome to Your Digital Future</h2>
+    <p class="intro">
+      The Digital Success System is an educational course designed to help
+      you understand the digital business world and develop skills you can
+      put into practice at your own pace.
+    </p>
+    <div class="grid">
+      <div class="card">
+        <div class="icon">📱</div>
+        <h3>Content Creation</h3>
+        <p>Learn content planning, short-form videos, faceless content,
+        and visual storytelling.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🎯</div>
+        <h3>Digital Marketing</h3>
+        <p>Explore branding, audience research, social media strategy,
+        and ethical promotion.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🛍️</div>
+        <h3>Online Selling</h3>
+        <p>Understand digital products, online storefronts, e-commerce,
+        and sales pages.</p>
+      </div>
+      <div class="card">
+        <div class="icon">📈</div>
+        <h3>Business Growth</h3>
+        <p>Explore affiliate marketing, customer relationships,
+        and ways to improve your strategy.</p>
+      </div>
+    </div>
+  </section>
 
-<label>Company Name</label>
-<input id="company" placeholder="Example: Al Amal Company">
+  <section class="soft">
+    <h2 class="section-title">What You Will Explore</h2>
+    <p class="intro">
+      A structured learning journey covering essential concepts and
+      practical digital business pathways.
+    </p>
+    <div class="lessons">
+      <div class="lesson">✓ Digital business foundations and mindset</div>
+      <div class="lesson">✓ Personal branding and audience building</div>
+      <div class="lesson">✓ Canva, visual design, and content planning</div>
+      <div class="lesson">✓ TikTok, Instagram, Pinterest, and social platforms</div>
+      <div class="lesson">✓ Digital products, PLR concepts, and online stores</div>
+      <div class="lesson">✓ Affiliate marketing and promotional strategies</div>
+      <div class="lesson">✓ E-commerce and dropshipping fundamentals</div>
+      <div class="lesson">✓ Sales pages, offers, and customer experience</div>
+      <div class="lesson">✓ Content systems and business improvement</div>
+    </div>
+  </section>
 
-<label>Address</label>
-<input id="address" placeholder="Customer address">
+  <section>
+    <h2 class="section-title">Who Is This Course For?</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Beginners</h3>
+        <p>People who want to understand digital business from the basics.</p>
+      </div>
+      <div class="card">
+        <h3>Content Creators</h3>
+        <p>People who want to develop their content and online presence.</p>
+      </div>
+      <div class="card">
+        <h3>Aspiring Entrepreneurs</h3>
+        <p>People exploring digital products, online selling, and marketing.</p>
+      </div>
+    </div>
+  </section>
 
-<div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-<div>
-<label>Country</label>
-<input id="country" placeholder="Example: Tunisia">
-</div>
-<div>
-<label>Region</label>
-<input id="region" placeholder="Example: Greater Tunis">
-</div>
-</div>
+  <section class="soft" id="enroll">
+    <h2 class="section-title">Start Your Learning Journey</h2>
+    <p class="intro">
+      Take the next step toward building your digital knowledge
+      with The Digital Success System.
+    </p>
+    <div class="pricing">
+      <h3>The Digital Success System</h3>
+      <div class="price">$35</div>
+      <p>USD</p>
+      <ul>
+        <li>Structured digital business education</li>
+        <li>Content creation and marketing topics</li>
+        <li>Online selling and digital product concepts</li>
+        <li>Self-paced learning approach</li>
+      </ul>
+      <!-- Add your verified live checkout URL to the button below -->
+      <a class="btn" href="YOUR_LIVE_CHECKOUT_URL">Get Course Access</a>
+      <p class="note">
+        Replace the checkout link with your working payment link before publishing.
+        Only advertise access and features that are actually included.
+      </p>
+    </div>
+  </section>
 
-<label>ZIP / Postal Code</label>
-<input id="postalCode" inputmode="numeric" placeholder="Example: 1000">
-
-<label>Phone Number</label>
-<input id="phone" type="tel" placeholder="Example: 21 123 456">
-
-<label>Email</label>
-<input id="email" type="email" placeholder="Example: ahmed@example.com">
-
-<label>📅 Follow-up Date</label>
-<input id="followDate" type="date">
-
-<label>📅 Appointment Date</label>
-<input id="appointmentDate" type="date">
-
-<label>⏰ Reminder Time</label>
-<input id="followTime" type="time">
-
-<label>📝 Follow-up Reason</label>
-<input id="followReason" placeholder="Example: Call to confirm the order">
-
-<label>Notes</label>
-<textarea id="notes" placeholder="Enter any important information about the customer"></textarea>
-
-<button class="save" onclick="saveClient()">💾 Save Customer</button>
-<button class="return" onclick="goBack()">↩️ Back</button>
-
-<div id="message">✅ Customer registration successful</div>
-</div>
-
-<div class="box" style="margin-top:18px">
-<h2>🔎 Search for a Customer</h2>
-<input id="clientSearch" placeholder="Search by customer name or phone number" oninput="searchClients()">
-<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-<button class="search-btn" onclick="searchClients()">🔎 Search</button>
-<button class="all-btn" onclick="openClientListPage()">👥 Customer List</button>
-</div>
-</div>
-<div id="saved"></div>
+  <section>
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <div class="faq">
+      <details>
+        <summary>Is this course suitable for beginners?</summary>
+        <p>Yes. The course is designed to introduce digital business
+        concepts in an accessible, structured way.</p>
+      </details>
+      <details>
+        <summary>Can I learn at my own pace?</summary>
+        <p>The learning approach is self-paced. Confirm your course
+        delivery and access arrangements before purchasing.</p>
+      </details>
+      <details>
+        <summary>Will this course guarantee income?</summary>
+        <p>No. Results depend on your skills, effort, market conditions,
+        and business decisions. No specific income is guaranteed.</p>
+      </details>
+      <details>
+        <summary>How do I purchase the course?</summary>
+        <p>Use the purchase button above once the seller has connected
+        a valid, active checkout link.</p>
+      </details>
+    </div>
+  </section>
 </main>
 
+<footer>
+  <p><strong>The Digital Success System</strong></p>
+  <p>Learn. Create. Build.</p>
+  <p style="margin-top:12px;font-size:13px;">
+    © 2026 The Digital Success System. All rights reserved.
+  </p>
+  <p style="font-size:13px;margin-top:8px;">
+    Educational content only. No earnings or business results are guaranteed.
+  </p>
+</footer>
 
-<div id="clientListPage" class="list-page">
-  <div class="list-header">
-    <button class="back-list" onclick="closeClientListPage()">↩️ Back</button>
-    <h2>👥 Customer List</h2>
-  </div>
-  <div id="fullClientList" class="full-client-list"></div>
-</div>
-
-<div id="detailsModal" class="details-modal" onclick="if(event.target===this)closeDetails()">
-  <div class="modal-card">
-    <div class="modal-head">
-      <button class="close-modal" onclick="closeDetails()">✕</button>
-      <h2>👤 Customer Information</h2>
-    </div>
-    <div id="detailsContent"></div>
-  </div>
-</div>
-
-<div id="modal" class="form-modal" onclick="if(event.target===this)document.getElementById('modal').classList.remove('show')">
-  <div class="modal-card">
-    <div class="modal-head">
-      <button class="close-modal" onclick="document.getElementById('modal').classList.remove('show')">✕</button>
-      <h2 id="formTitle">➕ Add Customer</h2>
-    </div>
-    <input type="hidden" id="editId">
-    <label>Customer Name *</label><input id="m_name" placeholder="Example: Ahmed Ben Ali">
-    <label>Company Name</label><input id="m_company" placeholder="Example: Al Amal Company">
-    <label>Address</label><input id="m_address" placeholder="Customer address">
-    <label>Country</label><input id="m_country" placeholder="Example: Tunisia">
-    <label>Region</label><input id="m_region" placeholder="Example: Greater Tunis">
-    <label>ZIP / Postal Code</label><input id="m_postalCode" placeholder="1000">
-    <label>Phone Number</label><input id="m_phone" type="tel" placeholder="21 123 456">
-    <label>Email</label><input id="m_email" type="email" placeholder="ahmed@example.com">
-    <label>📅 Follow-up Date</label><input id="m_followDate" type="date">
-    <label>📅 Appointment Date</label><input id="m_appointmentDate" type="date">
-    <label>⏰ Reminder Time</label><input id="m_followTime" type="time">
-    <label>📝 Follow-up Reason</label><input id="m_followReason" placeholder="Reason for contact">
-    <label>Notes</label><textarea id="m_notes" placeholder="Customer notes"></textarea>
-    <button class="save" onclick="saveFromModal()">💾 Save</button>
-  </div>
-</div>
-
-<script>
-const KEY="clients_step_one_ar";
-let clients=JSON.parse(localStorage.getItem(KEY)||"[]");
-
-function saveClient(){
- const name=document.getElementById("name").value.trim();
- if(!name){alert("Please enter the customer name");return}
-
- const editId=document.getElementById("editId") ? document.getElementById("editId").value : "";
- const data={
-  name:name,
-  company:document.getElementById("company").value.trim(),
-  address:document.getElementById("address").value.trim(),
-  country:document.getElementById("country").value.trim(),
-  region:document.getElementById("region").value.trim(),
-  postalCode:document.getElementById("postalCode").value.trim(),
-  followDate:document.getElementById("followDate").value,
-  followTime:document.getElementById("followTime").value,
-  followReason:document.getElementById("followReason").value.trim(),
-  phone:document.getElementById("phone").value.trim(),
-  email:document.getElementById("email").value.trim(),
-  notes:document.getElementById("notes").value.trim()
- };
-
- if(editId){
-   const index=clients.findIndex(c=>c.id===editId);
-   if(index>=0){
-     data.id=editId;
-     data.createdAt=clients[index].createdAt;
-     data.reminderDone=false;
-     clients[index]=data;
-   }
- }else{
-   data.id=Date.now().toString();
-   data.createdAt=new Date().toISOString();
-   data.reminderDone=false;
-   clients.unshift(data);
- }
-
- localStorage.setItem(KEY,JSON.stringify(clients));
- document.getElementById("message").style.display="block";
- document.getElementById("message").textContent="✅ Customer information saved successfully";
- ["name","company","address","country","region","postalCode","followDate","appointmentDate","followTime","followReason","phone","email","notes"].forEach(id=>document.getElementById(id).value="");
- if(document.getElementById("editId")) document.getElementById("editId").value="";
- updateReminderDashboard();
- showAllClients();
-}
-
-function showSaved(items=clients,title="Registered customers"){
- const box=document.getElementById("saved");
- if(!items.length){
-   box.innerHTML=`<div class="box search-empty">No results found</div>`;
-   return;
- }
- box.innerHTML=`<div class="box"><h3>${title}</h3>`+items.map(c=>
- `<div class="client" data-id="${c.id}" onclick="openDetailsFromCard(event, '${c.id}')">
- <b class="client-name">${escapeHtml(c.name)}</b>
- ${c.company?`<div class="small">🏢 ${escapeHtml(c.company)}</div>`:""}
- ${c.address?`<div class="small">📍 ${escapeHtml(c.address)}</div>`:""}
- ${(c.country||c.region||c.postalCode)?`<div class="small">🌍 ${escapeHtml([c.country,c.region,c.postalCode].filter(Boolean).join(" - "))}</div>`:""}
- ${c.phone?`<div class="small">📞 ${escapeHtml(c.phone)}</div>`:""}
- <div class="card-actions">
-   <button class="add-btn" onclick="event.stopPropagation();newClient()">➕ Add</button>
-   <button class="edit-btn" onclick="event.stopPropagation();editClient('${c.id}')">✏️ Edit</button>
-   <button class="delete-btn" onclick="event.stopPropagation();deleteClient('${c.id}')">🗑️ Delete</button>
- </div>
- </div>`).join("")+"</div>";
-}
-
-function searchClients(){
- const q=document.getElementById("clientSearch").value.trim().toLowerCase();
- if(!q){showAllClients();return}
- const results=clients.filter(c=>{
-   const name=String(c.name||"").toLowerCase();
-   const phone=String(c.phone||"").replace(/\s+/g,"").toLowerCase();
-   const queryPhone=q.replace(/\s+/g,"");
-   return name.includes(q)||phone.includes(queryPhone);
- });
- showSaved(results,`Search results (${results.length})`);
-}
-
-
-
-function reminderDateTime(c){
- if(!c.followDate)return null;
- const t=c.followTime||"09:00";
- const d=new Date(c.followDate+"T"+t+":00");
- return isNaN(d.getTime())?null:d;
-}
-
-function reminderStatus(c){
- const d=reminderDateTime(c);
- if(!d || c.reminderDone)return "none";
- const now=new Date();
- const start=new Date(now.getFullYear(),now.getMonth(),now.getDate());
- const tomorrow=new Date(start); tomorrow.setDate(tomorrow.getDate()+1);
- if(d<start)return "overdue";
- if(d<tomorrow)return "today";
- return "upcoming";
-}
-
-function updateReminderDashboard(){
-  // Dashboard status cards removed from the interface.
-}
-
-function showReminders(){
- const page=document.getElementById("clientListPage");
- const box=document.getElementById("fullClientList");
- const active=clients.filter(c=>!c.reminderDone && reminderDateTime(c))
-   .sort((a,b)=>reminderDateTime(a)-reminderDateTime(b));
- document.querySelector("#clientListPage .list-header h2").textContent="🔔 Reminder List";
- if(!active.length){
-   box.innerHTML='<div class="client" style="text-align:center">No reminders at the moment</div>';
- }else{
-   box.innerHTML=active.map(c=>{
-     const s=reminderStatus(c);
-     const label=s==="overdue"?"🔴 Overdue":s==="today"?"🟠 Today":"🟢 Upcoming";
-     return `<div class="client reminder-card ${s}">
-       <div><b class="client-name" onclick="event.stopPropagation();showClientDetails('${c.id}')">${escapeHtml(c.name)}</b></div>
-       <div class="reminder-time">${label} — 📅 ${escapeHtml(c.followDate)} ⏰ ${escapeHtml(c.followTime||"09:00")}</div>
-       ${c.followReason?`<div class="small">🎯 ${escapeHtml(c.followReason)}</div>`:""}
-       ${c.phone?`<div class="small">📞 ${escapeHtml(c.phone)}</div>`:""}
-       <div class="card-actions">
-        <button class="add-btn" onclick="event.stopPropagation();completeReminder('${c.id}')">✅ Contacted</button>
-        <button class="edit-btn" onclick="event.stopPropagation();snoozeReminder('${c.id}')">⏰ Snooze</button>
-       </div>
-     </div>`;
-   }).join("");
- }
- page.style.display="block"; document.body.style.overflow="hidden";
-}
-
-function completeReminder(id){
- const c=clients.find(x=>x.id===id); if(!c)return;
- c.reminderDone=true;
- localStorage.setItem(KEY,JSON.stringify(clients));
- updateReminderDashboard(); showReminders();
-}
-
-function snoozeReminder(id){
- const c=clients.find(x=>x.id===id); if(!c)return;
- const d=reminderDateTime(c)||new Date();
- d.setDate(d.getDate()+1);
- c.followDate=d.toISOString().slice(0,10);
- c.followTime=d.toTimeString().slice(0,5);
- c.reminderDone=false;
- localStorage.setItem(KEY,JSON.stringify(clients));
- updateReminderDashboard(); showReminders();
-}
-
-async function enableNotifications(){
- if(!("Notification" in window)){
-   alert("This browser does not support phone notifications.");
-   return;
- }
- const permission=await Notification.requestPermission();
- if(permission==="granted"){
-   alert("✅ Notifications enabled. Keep the program open to receive the reminder on time.");
-   checkReminders(true);
- }else{
-   alert("Notifications were not allowed.");
- }
-}
-
-let lastReminderKey="";
-function checkReminders(force=false){
- const now=new Date();
- clients.forEach(c=>{
-   if(c.reminderDone)return;
-   const d=reminderDateTime(c);
-   if(!d)return;
-   const diff=Math.abs(now-d);
-   const key=c.id+"-"+c.followDate+"-"+(c.followTime||"09:00");
-   if((d<=now && now-d<65000) && (force || key!==lastReminderKey)){
-     lastReminderKey=key;
-     sendReminder(c);
-   }
- });
- updateReminderDashboard();
-}
-
-function sendReminder(c){
- prepareReminderAudio();
- playCalmReminderMusic();
- const title="🔔 It is time to follow up with the customer";
- const body=`${c.name}${c.followReason?" — "+c.followReason:""}${c.phone?" — 📞 "+c.phone:""}`;
- if("Notification" in window && Notification.permission==="granted"){
-   new Notification(title,{body});
- }
-
- // Give the music a moment to start before showing the reminder dialog.
- setTimeout(() => {
-   alert("🔔 It is time to follow up with the customer: "+c.name);
- }, 350);
-}
-
-setInterval(checkReminders,30000);
-
-function openClientListPage(){
- const page=document.getElementById("clientListPage");
- const box=document.getElementById("fullClientList");
- if(!clients.length){
-   box.innerHTML='<div class="client" style="text-align:center;padding:35px">👥<br><b>No customers registered</b><div class="small">Add your first customer to see them here.</div></div>';
- }else{
-   box.innerHTML=clients.map((c,i)=>`
-   <div class="client" onclick="showClientDetails('${c.id}')">
-     <div style="display:flex;align-items:center;gap:8px">
-       <span class="list-number">${i+1}</span>
-       <b class="client-name" style="margin:0">${escapeHtml(c.name)}</b>
-     </div>
-     ${c.company?`<div class="small">🏢 ${escapeHtml(c.company)}</div>`:""}
-     ${c.phone?`<span class="list-phone">📞 ${escapeHtml(c.phone)}</span>`:""}
-   </div>`).join("");
- }
- page.style.display="block";
- document.body.style.overflow="hidden";
-}
-
-function closeClientListPage(){
- document.getElementById("clientListPage").style.display="none";
- document.body.style.overflow="";
-}
-
-function showAllClients(){
- document.getElementById("clientSearch").value="";
- showSaved(clients,"Customer List");
-}
-
-
-function openDetailsFromCard(event,id){
- if(event.target.closest("button")) return;
- showClientDetails(id);
-}
-function showClientDetails(id){
- const c=clients.find(x=>x.id===id);
- if(!c)return;
- document.getElementById("detailsContent").innerHTML=
- `<div class="detail-row"><span class="detail-label">👤 Customer Name</span><div class="detail-value">${escapeHtml(c.name||"—")}</div></div>
- <div class="detail-row"><span class="detail-label">🏢 Company</span><div class="detail-value">${escapeHtml(c.company||"—")}</div></div>
- <div class="detail-row"><span class="detail-label">📍 Address</span><div class="detail-value">${escapeHtml(c.address||"—")}</div></div>
- <div class="detail-row"><span class="detail-label">🌍 Country</span><div class="detail-value">${escapeHtml(c.country||"—")}</div></div>
- <div class="detail-row"><span class="detail-label">🗺️ Region</span><div class="detail-value">${escapeHtml(c.region||"—")}</div></div>
- <div class="detail-row"><span class="detail-label">📮 ZIP / Postal Code</span><div class="detail-value">${escapeHtml(c.postalCode||"—")}</div></div>
- <div class="detail-row"><span class="detail-label">📞 Phone Number</span><div class="detail-value">${escapeHtml(c.phone||"—")}</div></div>
- <div class="detail-row"><span class="detail-label">✉️ Email</span><div class="detail-value">${escapeHtml(c.email||"—")}</div></div>
- <div class="detail-row"><span class="detail-label">📅 Follow-up Date</span><div class="detail-value">${escapeHtml(c.followDate||"—")}</div></div>
-  <div class="detail-row"><span class="detail-label">📅 Appointment Date</span><div class="detail-value">${escapeHtml(c.appointmentDate||"—")}</div></div>
- <div class="detail-row"><span class="detail-label">⏰ Reminder Time</span><div class="detail-value">${escapeHtml(c.followTime||"—")}</div></div>
- <div class="detail-row"><span class="detail-label">🎯 Follow-up Reason</span><div class="detail-value">${escapeHtml(c.followReason||"—")}</div></div>
- <div class="detail-row"><span class="detail-label">📝 Notes</span><div class="detail-value">${escapeHtml(c.notes||"—")}</div></div>
- <div class="card-actions">
- <button class="edit-btn" onclick="closeDetails();editClient('${c.id}')">✏️ Edit</button>
- <button class="delete-btn" onclick="closeDetails();deleteClient('${c.id}')">🗑️ Delete</button>
- </div>`;
- document.getElementById("detailsModal").classList.add("show");
-}
-function closeDetails(){document.getElementById("detailsModal").classList.remove("show")}
-
-function newClient(){
- document.getElementById("editId").value="";
- document.getElementById("formTitle").textContent="➕ Add Customer";
- ["name","company","address","country","region","postalCode","phone","email","followDate","appointmentDate","followTime","followReason","notes"].forEach(k=>document.getElementById("m_"+k).value="");
- document.getElementById("modal").classList.add("show");
-}
-
-function editClient(id){
- const c=clients.find(x=>x.id===id); if(!c)return;
- document.getElementById("editId").value=c.id;
- document.getElementById("formTitle").textContent="✏️ Edit Customer";
- ["name","company","address","country","region","postalCode","phone","email","followDate","appointmentDate","followTime","followReason","notes"].forEach(k=>document.getElementById("m_"+k).value=c[k]||"");
- document.getElementById("modal").classList.add("show");
-}
-
-function saveFromModal(){
- const id=document.getElementById("editId").value;
- const name=document.getElementById("m_name").value.trim();
- if(!name){alert("Please enter the customer name");return}
- const data={
-  name, company:document.getElementById("m_company").value.trim(), address:document.getElementById("m_address").value.trim(),
-  country:document.getElementById("m_country").value.trim(), region:document.getElementById("m_region").value.trim(), postalCode:document.getElementById("m_postalCode").value.trim(),
-  phone:document.getElementById("m_phone").value.trim(), email:document.getElementById("m_email").value.trim(), followDate:document.getElementById("m_followDate").value, appointmentDate:document.getElementById("m_appointmentDate").value,
-  followTime:document.getElementById("m_followTime").value, followReason:document.getElementById("m_followReason").value.trim(), notes:document.getElementById("m_notes").value.trim()
- };
- if(id){ const i=clients.findIndex(c=>c.id===id); if(i>=0){data.id=id;data.createdAt=clients[i].createdAt;data.reminderDone=clients[i].reminderDone||false;clients[i]=data;} }
- else {data.id=Date.now().toString();data.createdAt=new Date().toISOString();data.reminderDone=false;clients.unshift(data);}
- localStorage.setItem(KEY,JSON.stringify(clients));
- document.getElementById("modal").classList.remove("show");
- showAllClients(); updateReminderDashboard();
- alert("✅ Customer information saved");
-}
-
-function deleteClient(id){
- if(!confirm("Do you want to delete this customer?"))return;
- clients=clients.filter(c=>c.id!==id);
- localStorage.setItem(KEY,JSON.stringify(clients));
- showSaved();
-}
-
-function goBack(){
- if(history.length>1) history.back();
- else alert("There is no previous page. You can close this page.");
-}
-
-function escapeHtml(v){
- return String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
-}
-showAllClients();
-updateReminderDashboard();
-checkReminders();
-</script>
-
-<script>
-let reminderAudioCtx = null;
-let reminderMusicTimer = null;
-let reminderMusicStopTimer = null;
-
-function prepareReminderAudio(){
-  try{
-    const AC = window.AudioContext || window.webkitAudioContext;
-    if(!AC) return;
-    if(!reminderAudioCtx) reminderAudioCtx = new AC();
-    if(reminderAudioCtx.state === "suspended") reminderAudioCtx.resume();
-  }catch(e){}
-}
-
-document.addEventListener("pointerdown", prepareReminderAudio, {passive:true});
-document.addEventListener("touchstart", prepareReminderAudio, {passive:true});
-
-function playCalmReminderMusic(){
-  try{
-    const AC = window.AudioContext || window.webkitAudioContext;
-    if(!AC) return;
-    if(!reminderAudioCtx) reminderAudioCtx = new AC();
-    const ctx = reminderAudioCtx;
-    if(ctx.state === "suspended") ctx.resume();
-
-    // New reminder melody: brighter, more audible and different from the old one.
-    // Uses a gentle piano-like lead plus soft harmony and bass.
-    const master = ctx.createGain();
-    const compressor = ctx.createDynamicsCompressor();
-    master.gain.setValueAtTime(0.72, ctx.currentTime);
-    compressor.threshold.setValueAtTime(-18, ctx.currentTime);
-    compressor.knee.setValueAtTime(18, ctx.currentTime);
-    compressor.ratio.setValueAtTime(4, ctx.currentTime);
-    compressor.attack.setValueAtTime(0.005, ctx.currentTime);
-    compressor.release.setValueAtTime(0.18, ctx.currentTime);
-    master.connect(compressor);
-    compressor.connect(ctx.destination);
-
-    const melody = [
-      [392.00,0.00],[440.00,0.55],[523.25,1.10],[440.00,1.65],
-      [392.00,2.20],[329.63,2.75],[392.00,3.30],[440.00,3.85],
-      [523.25,4.40],[587.33,4.95],[523.25,5.50],[440.00,6.05],
-      [392.00,6.60],[329.63,7.15],[392.00,7.70],[440.00,8.25],
-      [493.88,8.80],[523.25,9.35],[587.33,9.90],[659.25,10.45],
-      [587.33,11.00],[523.25,11.55],[440.00,12.10],[392.00,12.65],
-      [349.23,13.20],[392.00,13.75],[440.00,14.30],[523.25,14.85],
-      [440.00,15.40],[392.00,15.95],[329.63,16.50],[392.00,17.05],
-      [440.00,17.60],[523.25,18.15],[587.33,18.70],[523.25,19.25],
-      [440.00,19.80],[392.00,20.35],[329.63,20.90],[392.00,21.45],
-      [440.00,22.00],[523.25,22.55],[659.25,23.10],[587.33,23.65],
-      [523.25,24.20],[440.00,24.75],[392.00,25.30],[523.25,25.85],
-      [659.25,26.40],[587.33,26.95],[523.25,27.50],[440.00,28.05],
-      [392.00,28.60],[329.63,29.15],[392.00,29.70],[440.00,30.25]
-    ];
-
-    const harmony = [
-      [261.63,0.00],[329.63,1.10],[261.63,2.20],[293.66,3.30],
-      [329.63,4.40],[392.00,5.50],[329.63,6.60],[261.63,7.70],
-      [293.66,8.80],[349.23,9.90],[329.63,11.00],[261.63,12.10],
-      [293.66,13.20],[329.63,14.30],[392.00,15.40],[293.66,16.50],
-      [329.63,17.60],[392.00,18.70],[349.23,19.80],[261.63,20.90],
-      [293.66,22.00],[329.63,23.10],[392.00,24.20],[329.63,25.30],
-      [261.63,26.40],[329.63,27.50],[392.00,28.60],[293.66,29.70]
-    ];
-
-    const start = ctx.currentTime + 0.08;
-
-    function note(freq, offset, duration, volume, type){
-      const now = start + offset;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      const filter = ctx.createBiquadFilter();
-      osc.type = type;
-      osc.frequency.setValueAtTime(freq, now);
-      filter.type = "lowpass";
-      filter.frequency.setValueAtTime(type === "triangle" ? 2600 : 2200, now);
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(volume, now + 0.035);
-      gain.gain.exponentialRampToValueAtTime(volume * 0.55, now + duration * 0.55);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-      osc.connect(filter);
-      filter.connect(gain);
-      gain.connect(master);
-      osc.start(now);
-      osc.stop(now + duration + 0.03);
-    }
-
-    melody.forEach(([freq, offset]) => note(freq, offset, 0.48, 0.30, "triangle"));
-    harmony.forEach(([freq, offset]) => note(freq, offset, 0.90, 0.12, "sine"));
-
-    // Soft low notes to make the reminder easier to hear on a phone speaker.
-    [130.81,146.83,164.81,174.61,130.81,146.83,164.81,130.81].forEach((freq,i)=>{
-      note(freq, i*3.85, 1.35, 0.13, "sine");
-    });
-
-    // Fade the complete music down near the end.
-    master.gain.setValueAtTime(0.72, start + 29.5);
-    master.gain.linearRampToValueAtTime(0.0, start + 31.2);
-  }catch(e){
-    console.log("Reminder music error:", e);
-  }
-}
-
-window.playCalmReminderMusic = playCalmReminderMusic;
-</script>
-<div style="text-align:center; margin:30px 10px; padding:20px;">
-  <a href="privacy.html"
-     style="display:inline-block; margin:5px; padding:12px 18px; background:#ffffff; color:#222; text-decoration:none; border-radius:8px;">
-    Privacy Policy
-  </a>
-
-  <a href="refund.html"
-     style="display:inline-block; margin:5px; padding:12px 18px; background:#ffffff; color:#222; text-decoration:none; border-radius:8px;">
-    Refund Policy
-  </a>
-
-  <a href="terms.html"
-     style="display:inline-block; margin:5px; padding:12px 18px; background:#ffffff; color:#222; text-decoration:none; border-radius:8px;">
-    Terms of Service
-  </a>
-</div>
-
- 
 </body>
 </html>
